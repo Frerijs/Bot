@@ -1,8 +1,6 @@
 import streamlit as st
 import requests
 import time
-import pandas as pd
-import matplotlib.pyplot as plt
 
 # Funkcija, lai iegūtu BTC cenu
 def get_btc_price():
@@ -17,40 +15,32 @@ def get_btc_price():
 
 # Streamlit aplikācija
 st.title("Bitcoin (BTC) pašreizējās cenas vizualizācija")
-st.write("Šī aplikācija parāda BTC cenas izmaiņas reāllaikā USD.")
+st.write("Šī aplikācija parāda BTC cenu reāllaikā USD.")
 
 # Iestatījumi
 refresh_rate = st.sidebar.slider("Atjaunināšanas intervāls (sekundēs):", 1, 60, 5)
-max_points = st.sidebar.number_input("Datu punktu skaits:", 10, 500, 50)
+max_updates = st.sidebar.number_input("Atjauninājumu skaits:", 5, 100, 20)
 
 # Sākuma vērtības
-prices = []
-timestamps = []
-
-# Galvenā cilpa datu atjaunināšanai
 placeholder = st.empty()
-progress_bar = st.progress(0)
+prices = []
 
-for i in range(max_points):
+# Cikls cenu atjaunošanai un rādīšanai kā teksts
+for i in range(max_updates):
     price = get_btc_price()
     if price is not None:
-        current_time = pd.Timestamp.now()
         prices.append(price)
-        timestamps.append(current_time)
+        current_time = time.strftime("%Y-%m-%d %H:%M:%S")
         
-        # Ierobežo punktu skaitu
-        if len(prices) > max_points:
-            prices.pop(0)
-            timestamps.pop(0)
-        
-        # Datu vizualizācija
-        data = pd.DataFrame({"Laiks": timestamps, "Cena (USD)": prices})
-        placeholder.line_chart(data.set_index("Laiks"))
-        
-        progress_bar.progress((i + 1) / max_points)
-        time.sleep(refresh_rate)
+        # Izvadīt jaunāko cenu kā tekstu
+        placeholder.markdown(f"""
+            ## Pašreizējā BTC cena: **{price:.2f} USD**
+            **Atjaunināts:** {current_time}
+        """)
     else:
-        st.error("Neizdevās iegūt BTC cenu. Pārbaudi internetu un API statusu.")
+        st.error("Neizdevās iegūt BTC cenu. Pārbaudi interneta savienojumu vai API statusu.")
         break
+    
+    time.sleep(refresh_rate)
 
-st.success("Datu apstrāde pabeigta!")
+st.success("Datu atjaunināšana pabeigta!")
