@@ -11,11 +11,27 @@ def generate_star(points=5, inner_radius=0.5, outer_radius=1.0):
     y = radii * np.sin(angles)
     return x, y
 
+# Pilns zvaigžņu saraksts
+star_list = [
+    {"name": "Luminara", "power": "Dāvā sapņotājiem radošas idejas", "legend": "Teika vēsta, ka, ja ieraudzīsi šo zvaigzni, tev būs laimīgs mēnesis!"},
+    {"name": "Celestara", "power": "Aizsargā pret sliktiem sapņiem", "legend": "Šī zvaigzne spīd tikai tiem, kas meklē patiesību."},
+    {"name": "Orionis", "power": "Nes veiksmi ceļotājiem", "legend": "Senie astronomi uzskatīja, ka tā ir atslēga uz paralēlo dimensiju."},
+    {"name": "Mystara", "power": "Piešķir spēku un izturību", "legend": "Leģenda vēsta, ka tā ir nokritusi no dievu vainaga."},
+    {"name": "Astraeus", "power": "Sniedz mieru un harmoniju", "legend": "Ja vēlēsies zem šīs zvaigznes, tava vēlēšanās piepildīsies!"},
+    {"name": "Vespera", "power": "Palīdz atrast ceļu dzīvē", "legend": "Zvaigzne, kas parādās tikai tiem, kas seko savam liktenim."},
+    {"name": "Zyphron", "power": "Dod gudrību un zināšanas", "legend": "Senās kultūras uzskatīja, ka tā ir vārti uz zināšanu valstību."},
+    {"name": "Novaeus", "power": "Iespējams, tā ir ceļš uz citu dimensiju", "legend": "Tie, kas to redz, piedzīvo neizskaidrojamus sapņus."},
+    {"name": "Sirioth", "power": "Pievelk labas enerģijas", "legend": "Zvaigzne, kas pasargā no ļaunām domām un sliktiem nodomiem."}
+]
+
 # Streamlit lietotnes sākums
 st.title("✨ Maģiskā Zvaigžņu Ģenerators ✨")
 st.write("Spied pogu un izveido savu unikālo maģisko zvaigzni!")
 
 if st.button("🌟 Ģenerēt maģisko zvaigzni!"):
+    # Izvēlamies nejaušu zvaigzni no saraksta
+    selected_star = random.choice(star_list)
+
     # Nejauša zvaigznes parametru izvēle
     num_points = random.choice([5, 6, 7, 8])  
     inner_radius = random.uniform(0.3, 0.6)   
@@ -43,37 +59,13 @@ if st.button("🌟 Ģenerēt maģisko zvaigzni!"):
     # Saglabājam attēlu
     star_image_path = "magical_star.png"
     plt.savefig(star_image_path, bbox_inches='tight', facecolor=bg_color)
-    st.image(star_image_path, caption="Tava maģiskā zvaigzne!")
-
-    # Nejauša zvaigznes īpašību ģenerēšana
-    star_names = ["Luminara", "Celestara", "Orionis", "Mystara", "Astraeus", "Vespera", "Zyphron"]
-    magical_powers = [
-        "Dāvā sapņotājiem radošas idejas",
-        "Aizsargā pret sliktiem sapņiem",
-        "Nes veiksmi ceļotājiem",
-        "Piešķir spēku un izturību",
-        "Sniedz mieru un harmoniju",
-        "Palīdz atrast ceļu dzīvē",
-        "Dod gudrību un zināšanas"
-    ]
-    legends = [
-        "Teika vēsta, ka, ja ieraudzīsi šo zvaigzni, tev būs laimīgs mēnesis!",
-        "Šī zvaigzne spīd tikai tiem, kas meklē patiesību.",
-        "Senie astronomi uzskatīja, ka tā ir atslēga uz paralēlo dimensiju.",
-        "Leģenda vēsta, ka tā ir nokritusi no dievu vainaga.",
-        "Ja vēlēsies zem šīs zvaigznes, tava vēlēšanās piepildīsies!"
-    ]
-
-    # Izvēlamies nejaušas īpašības
-    star_name = random.choice(star_names)
-    magical_power = random.choice(magical_powers)
-    legend = random.choice(legends)
+    st.image(star_image_path, caption=f"Tava maģiskā zvaigzne: {selected_star['name']}")
 
     # Parādām leģendu
-    st.subheader(f"🔮 Maģiskā Zvaigzne: {star_name}")
+    st.subheader(f"🔮 Maģiskā Zvaigzne: {selected_star['name']}")
     st.markdown(f"🌟 **Forma:** {num_points}-punktu zvaigzne  \n"
                 f"🎨 **Krāsa:** {star_color}  \n"
-                f"🔮 **Maģija:** {magical_power}  \n"
-                f"📜 **Leģenda:** {legend}")
+                f"🔮 **Maģija:** {selected_star['power']}  \n"
+                f"📜 **Leģenda:** {selected_star['legend']}")
 
 st.write("Izmēģini vēlreiz, lai atrastu savu īsto maģisko zvaigzni! 🌠")
