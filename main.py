@@ -1,69 +1,79 @@
 import streamlit as st
-import requests
-import time
-import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
+import random
 
-# Funkcija, lai iegūtu BTC cenu
-def get_btc_price():
-    url = "https://api.coindesk.com/v1/bpi/currentprice.json"
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        price = data["bpi"]["USD"]["rate_float"]
-        return price
-    else:
-        return None
+# Funkcija, lai ģenerētu zvaigznes formu
+def generate_star(points=5, inner_radius=0.5, outer_radius=1.0):
+    angles = np.linspace(0, 2 * np.pi, points * 2, endpoint=False)
+    radii = np.array([outer_radius if i % 2 == 0 else inner_radius for i in range(len(angles))])
+    x = radii * np.cos(angles)
+    y = radii * np.sin(angles)
+    return x, y
 
-# Streamlit aplikācija
-st.title("Bitcoin (BTC) pašreizējās cenas vizualizācija ar 15 min grafiku")
-st.write("Šī aplikācija parāda BTC cenu reāllaikā USD un 15 minūšu cenu izmaiņu grafiku.")
+# Streamlit lietotnes sākums
+st.title("✨ Maģiskā Zvaigžņu Ģenerators ✨")
+st.write("Spied pogu un izveido savu unikālo maģisko zvaigzni!")
 
-# Sānjoslas iestatījumi
-refresh_rate = st.sidebar.slider("Atjaunināšanas intervāls (sekundēs):", 5, 60, 10)
+if st.button("🌟 Ģenerēt maģisko zvaigzni!"):
+    # Nejauša zvaigznes parametru izvēle
+    num_points = random.choice([5, 6, 7, 8])  
+    inner_radius = random.uniform(0.3, 0.6)   
+    outer_radius = random.uniform(0.8, 1.2)   
 
-# Sākuma vērtības
-prices = []
-timestamps = []
+    # Ģenerējam zvaigznes formu
+    x, y = generate_star(num_points, inner_radius, outer_radius)
 
-# Galvenais vizualizācijas cikls
-placeholder_text = st.empty()
-placeholder_chart = st.empty()
-progress_bar = st.progress(0)
+    # Nejauša krāsa un fons
+    colors = ["gold", "deepskyblue", "purple", "magenta", "red", "lime"]
+    backgrounds = ["black", "navy", "darkred", "darkgreen"]
+    star_color = random.choice(colors)
+    bg_color = random.choice(backgrounds)
 
-start_time = time.time()
-while True:
-    # Saņem BTC cenu
-    price = get_btc_price()
-    if price is not None:
-        current_time = pd.Timestamp.now()
-        prices.append(price)
-        timestamps.append(current_time)
+    # Zīmējam zvaigzni
+    fig, ax = plt.subplots(figsize=(5,5))
+    ax.fill(x, y, color=star_color, edgecolor="white", linewidth=2)
+    ax.set_facecolor(bg_color)
+    ax.set_xlim(-1.5, 1.5)
+    ax.set_ylim(-1.5, 1.5)
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.set_frame_on(False)
 
-        # Ierobežo datus līdz pēdējām 15 minūtēm
-        while timestamps and (current_time - timestamps[0]).seconds > 900:
-            prices.pop(0)
-            timestamps.pop(0)
+    # Saglabājam attēlu
+    star_image_path = "magical_star.png"
+    plt.savefig(star_image_path, bbox_inches='tight', facecolor=bg_color)
+    st.image(star_image_path, caption="Tava maģiskā zvaigzne!")
 
-        # Teksta atjaunināšana
-        placeholder_text.markdown(f"""
-            ## Pašreizējā BTC cena: **{price:.2f} USD**
-            **Atjaunināts:** {current_time.strftime('%Y-%m-%d %H:%M:%S')}
-        """)
+    # Nejauša zvaigznes īpašību ģenerēšana
+    star_names = ["Luminara", "Celestara", "Orionis", "Mystara", "Astraeus", "Vespera", "Zyphron"]
+    magical_powers = [
+        "Dāvā sapņotājiem radošas idejas",
+        "Aizsargā pret sliktiem sapņiem",
+        "Nes veiksmi ceļotājiem",
+        "Piešķir spēku un izturību",
+        "Sniedz mieru un harmoniju",
+        "Palīdz atrast ceļu dzīvē",
+        "Dod gudrību un zināšanas"
+    ]
+    legends = [
+        "Teika vēsta, ka, ja ieraudzīsi šo zvaigzni, tev būs laimīgs mēnesis!",
+        "Šī zvaigzne spīd tikai tiem, kas meklē patiesību.",
+        "Senie astronomi uzskatīja, ka tā ir atslēga uz paralēlo dimensiju.",
+        "Leģenda vēsta, ka tā ir nokritusi no dievu vainaga.",
+        "Ja vēlēsies zem šīs zvaigznes, tava vēlēšanās piepildīsies!"
+    ]
 
-        # 15 min grafika atjaunināšana
-        if len(prices) > 1:
-            data = pd.DataFrame({"Laiks": timestamps, "Cena (USD)": prices})
-            placeholder_chart.line_chart(data.set_index("Laiks"))
+    # Izvēlamies nejaušas īpašības
+    star_name = random.choice(star_names)
+    magical_power = random.choice(magical_powers)
+    legend = random.choice(legends)
 
-    else:
-        st.error("Neizdevās iegūt BTC cenu. Pārbaudi interneta savienojumu vai API statusu.")
-        break
+    # Parādām leģendu
+    st.subheader(f"🔮 Maģiskā Zvaigzne: {star_name}")
+    st.markdown(f"🌟 **Forma:** {num_points}-punktu zvaigzne  \n"
+                f"🎨 **Krāsa:** {star_color}  \n"
+                f"🔮 **Maģija:** {magical_power}  \n"
+                f"📜 **Leģenda:** {legend}")
 
-    # Atjaunināšanas pauze
-    time.sleep(refresh_rate)
-
-    # Iziet no cikla pēc 15 minūtēm
-    if time.time() - start_time > 900:
-        st.success("15 minūšu datu vizualizācija pabeigta!")
-        break
+st.write("Izmēģini vēlreiz, lai atrastu savu īsto maģisko zvaigzni! 🌠")
